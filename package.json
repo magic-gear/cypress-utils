@@ -1,6 +1,7 @@
 {
   "name": "@magic-gear/cypress-utils",
   "version": "0.1.0",
+  "main": "index.js",
   "scripts": {
     "format": "prettier --write .",
     "prepare": "husky install"
