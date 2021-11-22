@@ -10,7 +10,9 @@
     "type": "git",
     "url": "git+https://github.com/magic-gear/cypress-utils.git"
   },
-  "dependencies": {},
+  "dependencies": {
+    "cypress-file-upload": "^5.0.8"
+  },
   "devDependencies": {
     "@testing-library/cypress": "^8.0.1",
     "eslint": "^7.18.0",
