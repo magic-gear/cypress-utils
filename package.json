@@ -11,7 +11,8 @@
     "url": "git+https://github.com/magic-gear/cypress-utils.git"
   },
   "dependencies": {
-    "cypress-file-upload": "^5.0.8"
+    "cypress-file-upload": "^5.0.8",
+    "cypress-wait-until": "^1.7.2"
   },
   "devDependencies": {
     "@testing-library/cypress": "^8.0.1",
