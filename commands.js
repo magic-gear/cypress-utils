@@ -64,8 +64,8 @@ Cypress.Commands.add('currentModal', () => {
   return cy.wait(1000).root().closest('html').find('.ant-modal-wrap').filter(':visible').last()
 })
 
-Cypress.Commands.add('download', { prevSubject: true }, function (subject, options) {
-  const { timeout = 20 * 1000, reloadTimeout = 2 * 1000, filename, url } = options ?? {}
+Cypress.Commands.add('download', { prevSubject: true }, function (subject, options = {}) {
+  const { timeout = 20 * 1000, reloadTimeout = 2 * 1000, filename, url } = options
   const downloadsFolder = Cypress.config('downloadsFolder')
   return cy
     .window()
