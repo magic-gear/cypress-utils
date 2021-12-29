@@ -1,5 +1,6 @@
 import 'cypress-file-upload'
 import 'cypress-wait-until'
+const path = require('path')
 
 Cypress.on('uncaught:exception', (err) => {
   if (err.name === 'AbortError') {
@@ -61,4 +62,38 @@ Cypress.Commands.add(
 Cypress.Commands.add('currentModal', () => {
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   return cy.wait(1000).root().closest('html').find('.ant-modal-wrap').filter(':visible').last()
+})
+
+Cypress.Commands.add('download', { prevSubject: true }, function (subject, options) {
+  const { timeout = 20 * 1000, reloadTimeout = 2 * 1000, filename, url } = options ?? {}
+  const downloadsFolder = Cypress.config('downloadsFolder')
+  return cy
+    .window()
+    .document()
+    .then(function (doc) {
+      let downloadedFilename
+      if (filename) {
+        downloadedFilename = path.join(downloadsFolder, filename)
+      } else if (url) {
+        doc.addEventListener('click', () => {
+          setTimeout(function () {
+            doc.location.reload() //trigger page load event for window opened by download
+          }, reloadTimeout)
+        })
+        cy.intercept('get', url, (req) =>
+          req.reply((res) => {
+            const downloadName = res.headers['content-disposition'].match(/filename="(.+)"/)[1]
+            downloadedFilename = path.join(downloadsFolder, downloadName)
+            res.send(res.body)
+          }),
+        )
+      }
+      return cy
+        .wrap(subject)
+        .click({ timeout })
+        .should(() => {
+          expect(downloadedFilename).to.be.a('string')
+        })
+        .then(() => cy.readFile(downloadedFilename))
+    })
 })
