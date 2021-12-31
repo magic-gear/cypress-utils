@@ -1,6 +1,6 @@
 {
   "name": "@magic-gear/cypress-utils",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "main": "index.js",
   "scripts": {
     "format": "prettier --write .",
