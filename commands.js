@@ -75,16 +75,14 @@ Cypress.Commands.add('download', { prevSubject: true }, function (subject, optio
       if (filename) {
         downloadedFilename = path.join(downloadsFolder, filename)
       } else if (url) {
-        doc.addEventListener('click', () => {
-          setTimeout(function () {
-            doc.location.reload() //trigger page load event for window opened by download
-          }, reloadTimeout)
-        })
         cy.intercept('get', url, (req) =>
           req.reply((res) => {
             const downloadName = res.headers['content-disposition'].match(/filename="(.+)"/)[1]
             downloadedFilename = path.join(downloadsFolder, downloadName)
             res.send(res.body)
+            setTimeout(function () {
+              doc.location.reload() //trigger page load event for window opened by download
+            }, reloadTimeout)
           }),
         )
       }
@@ -95,5 +93,6 @@ Cypress.Commands.add('download', { prevSubject: true }, function (subject, optio
           expect(downloadedFilename).to.be.a('string')
         })
         .then(() => cy.readFile(downloadedFilename))
+        .then(() => downloadedFilename)
     })
 })
