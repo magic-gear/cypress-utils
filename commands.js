@@ -92,7 +92,7 @@ Cypress.Commands.add('download', { prevSubject: true }, function (subject, optio
         .should(() => {
           expect(downloadedFilename).to.be.a('string')
         })
-        .then(() => cy.readFile(downloadedFilename))
+        .then(() => cy.readFile(downloadedFilename, { timeout }))
         .then(() => downloadedFilename)
     })
 })
