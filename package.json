@@ -1,6 +1,6 @@
 {
   "name": "@magic-gear/cypress-utils",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "main": "index.js",
   "scripts": {
     "format": "prettier --write .",
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "cypress-file-upload": "^5.0.8",
-    "cypress-wait-until": "^1.7.3"
+    "cypress-wait-until": "^1.7.2"
   },
   "devDependencies": {
     "@testing-library/cypress": "^8.0.1",
