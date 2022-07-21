@@ -8,11 +8,21 @@ Cypress.on('uncaught:exception', (err) => {
   }
 })
 
+let interceptRequestFile = false
+let fileURL
+
+const downloadIntercepter = (url) => {
+  if (interceptRequestFile) {
+    fileURL = url.toString()
+  }
+  return interceptRequestFile
+}
+
 Cypress.on('window:before:load', (win) => {
   // this lets React DevTools "see" components inside application's iframe
   win.__REACT_DEVTOOLS_GLOBAL_HOOK__ = window.top.__REACT_DEVTOOLS_GLOBAL_HOOK__
   cy.stub(win, 'open').callsFake((url) => {
-    return win.open.wrappedMethod.call(win, url, '_self')
+    if (downloadIntercepter(url) === false) return win.open.wrappedMethod.call(win, url, '_self')
   })
 })
 
@@ -94,5 +104,30 @@ Cypress.Commands.add('download', { prevSubject: true }, function (subject, optio
         })
         .then(() => cy.readFile(downloadedFilename, { timeout }))
         .then(() => downloadedFilename)
+    })
+})
+
+Cypress.Commands.add('requestFile', { prevSubject: true }, function (subject) {
+  const downloadsFolder = Cypress.config('downloadsFolder')
+  let downloadedFilename
+  interceptRequestFile = true
+  return cy
+    .wrap(subject)
+    .click()
+    .then(() => {
+      interceptRequestFile = false
+      if (fileURL) {
+        cy.request(fileURL).then(({ body, headers }) => {
+          const downloadName = headers['content-disposition'].match(/filename="(.+)"/)[1]
+          downloadedFilename = path.join(downloadsFolder, downloadName)
+          cy.writeFile(downloadedFilename, body)
+        })
+      }
+    })
+    .should(() => {
+      expect(downloadedFilename).to.be.a('string')
+    })
+    .then(() => {
+      return downloadedFilename
     })
 })
