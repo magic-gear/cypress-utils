@@ -14,6 +14,8 @@ let fileURL
 const downloadIntercepter = (url) => {
   if (interceptRequestFile) {
     fileURL = url.toString()
+    interceptRequestFile = false
+    return true
   }
   return interceptRequestFile
 }
@@ -114,8 +116,10 @@ Cypress.Commands.add('requestFile', { prevSubject: true }, function (subject) {
   return cy
     .wrap(subject)
     .click()
+    .should(() => {
+      expect(interceptRequestFile).to.be.false
+    })
     .then(() => {
-      interceptRequestFile = false
       if (fileURL) {
         cy.request(fileURL).then(({ body, headers }) => {
           const downloadName = headers['content-disposition'].match(/filename="(.+)"/)[1]
