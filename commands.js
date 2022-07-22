@@ -121,10 +121,10 @@ Cypress.Commands.add('requestFile', { prevSubject: true }, function (subject) {
     })
     .then(() => {
       if (fileURL) {
-        cy.request(fileURL).then(({ body, headers }) => {
+        cy.request({url: fileURL, encoding: 'binary'}).then(({ body, headers }) => {
           const downloadName = headers['content-disposition'].match(/filename="(.+)"/)[1]
           downloadedFilename = path.join(downloadsFolder, downloadName)
-          cy.writeFile(downloadedFilename, body)
+          cy.writeFile(downloadedFilename, body, 'binary')
         })
       }
     })
