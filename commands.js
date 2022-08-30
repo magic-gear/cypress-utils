@@ -29,7 +29,7 @@ Cypress.on('window:before:load', (win) => {
 })
 
 Cypress.Commands.add('loading', (timeout = 4000) => {
-  cy.findByRole('alert').should('exist')
+  cy.findAllByRole('alert').should('exist')
   cy.findByRole('alert', { timeout }).should('not.exist')
 })
 
